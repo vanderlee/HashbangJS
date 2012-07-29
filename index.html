@@ -1,0 +1,52 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title></title>
+		<script src="router.js"></script>
+		<script>
+			Router.map(['path'], function() {
+				console.log('Math: path', this);
+			});
+
+			var m = Router.map(['path', '234'], function() {
+				console.log('Match: path/234', this);
+			});
+			Router.unmap(m);
+
+			Router.map('path/{id}', function() {
+				console.log('Short match: path/{id}', this);
+			});
+
+			Router.map(['path', '{id}', ['sort', 'order']], function() {
+				console.log('Match: path/{id}/[sort,order]', this);
+			});
+
+			Router.map(['path', '{id}', ['sort', 'order']], function() {
+				console.log('Match: path/{id}/[sort,order]', this);
+			});
+
+			// short syntax (parses to ['path', '{id}', [Router.ALL, 'sort', 'order']]
+			Router.map('path/{id}/[ALL:sort,order]', function() {
+				console.log('Short match: path/{id}[sort,order]', this);
+			});
+
+			Router.notfound(function(hash) {
+				console.log('Not found: ' + hash);
+			});
+		</script>
+    </head>
+    <body>
+		<a href="#!path">Path</a>
+		<a href="#!path/234">Path short</a>
+		<a href="#!path/123/sort=1">Path sort</a>
+		<a href="#!path/353/order=33">Path order</a>
+		<a href="#!path/555/order=55/sort=5">Path all</a>
+		<a href="#!path/555/nothing/order=55/sort=5">Path nothing</a>
+		<a href="#!going/nowhere/fast">Path 404</a>
+    </body>
+</html>
