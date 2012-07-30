@@ -1,5 +1,5 @@
-RouterJS
-========
+HashbangJS
+==========
 
 Easy Hash URL router with complex path specs.
 HTML5 pushState not supported; significant common browsers don't support it.
