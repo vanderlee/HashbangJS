@@ -27,13 +27,21 @@
 			});
 
 			// short syntax (parses to ['path', '{id}', [Router.ALL, 'sort', 'order']]
-			Hashbang.map('path/{id}/[ALL:sort,order]', function() {
+			var m = Hashbang.map('path/{id}/[ALL:sort,order]', function() {
 				console.log('Short match: path/{id}[sort,order]', this);
 			});
+
+			Hashbang.addAfter(function() { console.log('global after'); });
+			m.addAfter(function() { console.log('local after'); });
+			m.addBefore(function() { console.log('local before'); });
+			m.addCallback(function() { console.log('callback 2'); });
+			Hashbang.addBefore(function() { console.log('global before'); });
 
 			Hashbang.notfound(function(hash) {
 				console.log('Not found: ' + hash);
 			});
+
+			Hashbang.root('#!path/123');
 		</script>
     </head>
     <body>
