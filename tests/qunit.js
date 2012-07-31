@@ -4,10 +4,14 @@ QUnit.testStart(function() {
 	location.hash = '';
 });
 
+QUnit.log(function(details) {
+	//console.debug("Log: " + details.result + ':' + details.message);
+});
+
 // helpers
-function asser_found() {
+function assert_found() {
 	Hashbang.notfound(function() {
-		ok(false, 'Not found');
+		ok(false, 'Not found - should have been found!');
 		start();
 	});
 }
