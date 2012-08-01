@@ -1,12 +1,12 @@
 module('tree');
 
-asyncTest("['path']", function() {
-	expect(1);
+test_mapping('Plain match', ['path'], '!path', true);
+test_mapping('Plain mismatch - nothing', ['path'], 'path', false);
+test_mapping('Plain mismatch - hash', ['path'], '#path', false);
+test_mapping('Plain match - hash', ['path'], '#!path', true);
 
-	Hashbang.map(['path'], function() {
-		ok(true, 'Map');
-		start();
-	});
+test_mapping('Additional char in route', ['paths'], '!path', false);
+test_mapping('Additional char in url', ['path'], '!paths', false);
 
-	location.hash = '!path';
-});
+test_mapping('Two parts match', ['path', 'more'], '!path/more', true);
+test_mapping('Two parts mismatch', ['path', 'more'], '!path/other', false);

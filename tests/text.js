@@ -1,66 +1,10 @@
 module('text');
 
-asyncTest('path', function() {
-	expect(1);
+test_mapping('Plain match', 'path', '!path', true);
+test_mapping('Plain mismatch', 'path', '!not', false);
 
-	assert_found();
+test_mapping('Additional char in route', 'paths', '!path', false);
+test_mapping('Additional char in url', 'path', '!paths', false);
 
-	Hashbang.map('path', function() {
-		ok(true, 'Map');
-		start();
-	});
-
-	location.hash = '!path';
-});
-
-asyncTest('not path', function() {
-	expect(1);
-
-	assert_not_found();
-
-	Hashbang.map('path', function() {
-		ok(true, 'should not match');
-		start();
-	});
-
-	location.hash = '!not';
-});
-
-asyncTest('path vs. paths', function() {
-	expect(1);
-
-	assert_not_found();
-
-	Hashbang.map('path', function() {
-		ok(false, 'should not match');
-		start();
-	});
-
-	location.hash = '!paths';
-});
-
-asyncTest('path/more', function() {
-	expect(1);
-
-	assert_found();
-
-	Hashbang.map('path/more', function() {
-		ok(true, 'Map');
-		start();
-	});
-
-	location.hash = '!path/more';
-});
-
-asyncTest('not path/more', function() {
-	expect(1);
-
-	assert_not_found();
-
-	Hashbang.map('path/else', function() {
-		ok(false, 'Should not match');
-		start();
-	});
-
-	location.hash = '!path/more';
-});
+test_mapping('Two parts match', 'path/more', '!path/more', true);
+test_mapping('Two parts mismatch', 'path/more', '!path/other', false);
