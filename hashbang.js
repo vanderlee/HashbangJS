@@ -305,13 +305,11 @@ var Hashbang = (function() {
 			}
 		},
 
-		// Specify callback to use when no mapping is matched.
 		notfound: function(_callback) {
 			notfound = _callback;
 			autoenable();
 		},
 
-		// Add a mapping.
 		map: function(_route, _callback) {
 			var mapping = new Mapping(_route, _callback);
 
@@ -333,7 +331,6 @@ var Hashbang = (function() {
 			dispatch();
 		},
 
-		// Remove a single mapping.
 		unmap: function(_Mapping) {
 			var m;
 			for (m = 0; m < mappings.length; ++m) {
@@ -345,7 +342,6 @@ var Hashbang = (function() {
 			}
 		},
 
-		// Remove all mappings.
 		reset: function() {
 			mappings = [];
 			autoenable();
