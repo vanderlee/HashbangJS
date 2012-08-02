@@ -1,6 +1,10 @@
 # HashbangJS
 Easy Hash URL router with complex path specs.
+
 HTML5 pushState not supported; many browsers in common use don't support it.
+
+* [Documentation](#documentation)
+* [Appendix](#appendix)
 
 ### Important
 Note that this is currently Beta. It should function but there are still things
@@ -29,7 +33,7 @@ coverage.
 * Passes JSLint 100% clean.
 * Passes Google Closure Compiler advanced mode
 
-## Functions
+## Documentation
 ### Mapping = Hashbang.map(route, callback);
 route may be either a text route, like PathJS (with some extra's) or an
 array format.
@@ -95,15 +99,16 @@ in array format routes; match all given path parts once, in any random order.
 ## Examples
 see index.html file
 
-## To Do
------
+## Appendix
+### To Do
+* Complete documentation
+* Turn index.html in a mini-portal with documentation. Make sure it uses
+Hashbang
 * R&D a way to report {id=val} pairs.
 * Allow to set prefix per mapping?
 * Hashbang.MANY: {},		// match atleast one, in any order
 * Hashbang.ANY: {},		// match zero or more, in any order.
 * Hashbang.OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
-
-## Appendix
 ### Terminology
 * Hashbang. The object of our subject.
 * mapping. A combination of a route and the callback(s) it triggers.
