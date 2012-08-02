@@ -10,13 +10,6 @@
  * No dependancies, no known conflicts.
  */
 
-//@todo R&D a way to report {id=val} pairs.
-//@todo Allow to set prefix per mapping?
-//@todo MANY: {},		// match atleast one, in any order
-//@todo ANY: {},		// match zero or more, in any order.
-//@todo OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
-//@todo Try to minimize code size
-
 var Hashbang = (function() {
 	"use strict";
 
@@ -27,7 +20,7 @@ var Hashbang = (function() {
 		root_hash,
 		root_handled	= false,
 
-		prefix			= '#!',
+		prefix,
 
 		mappings		= [],
 
@@ -150,14 +143,23 @@ var Hashbang = (function() {
 
 		try_mapping = function(hash, mapping) {
 			var values = {};
-			if (hash.substr(0, prefix.length) == prefix) {
-				if (mapping.match(values, hash.substr(prefix.length).split('/'))) {
-					apply_callbacks(befores, values);
-					mapping.callback(values);
-					apply_callbacks(afters, values);
-					return true;
+
+			if (prefix) {
+				if (hash.substr(0, prefix.length) != prefix) {
+					return false;
 				}
+				hash = hash.substr(prefix.length);
+			} else {
+				hash = hash.substr(hash.match(/^\W+/)[0].length);
 			}
+
+			if (mapping.match(values, hash.split('/'))) {
+				apply_callbacks(befores, values);
+				mapping.callback(values);
+				apply_callbacks(afters, values);
+				return true;
+			}
+
 			return false;
 		},
 
