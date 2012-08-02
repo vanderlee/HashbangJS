@@ -10,31 +10,32 @@
  * No dependancies, no known conflicts.
  */
 
-//@todo R&D a way report {id=val} pairs.
-//@todo Allow to set prefix per mapping
-//@todo	MANY: {},		// match atleast one, in any order
-//@todo	ANY: {},		// match zero or more, in any order.
-//@todo	OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
-
-"use strict";
+//@todo R&D a way to report {id=val} pairs.
+//@todo Allow to set prefix per mapping?
+//@todo MANY: {},		// match atleast one, in any order
+//@todo ANY: {},		// match zero or more, in any order.
+//@todo OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
+//@todo Try to minimize code size
 
 var Hashbang = (function() {
+	"use strict";
+
 	// private
 
 	var enabled			= false,
 
-		root_hash		= undefined,
+		root_hash,
 		root_handled	= false,
 
 		prefix			= '#!',
 
 		mappings		= [],
 
-		interval		= undefined,
+		interval,
 
-		previous_hash	= undefined,
+		previous_hash,
 
-		notfound		= undefined,
+		notfound,
 		befores			= [],
 		afters			= [],
 
@@ -45,19 +46,24 @@ var Hashbang = (function() {
 		},
 
 		setArray = function(array, value) {
-			for (var c in array)
-				if (array[c] === value)
+			var c;
+			for (c in array) {
+				if (array[c] === value) {
 					return false;
+				}
+			}
 			array.push(value);
 			return true;
 		},
 
 		unsetArray = function(array, value) {
-			for (var c in array)
+			var c;
+			for (c in array) {
 				if (array[c] === value) {
 					array.splice(c, 1);
 					return true;
 				}
+			}
 			return false;
 		},
 
@@ -72,7 +78,7 @@ var Hashbang = (function() {
 						}
 					}
 					return false;
-				}
+				};
 			},
 
 			variable: function(key) {
@@ -82,22 +88,52 @@ var Hashbang = (function() {
 						return position + 1;
 					}
 					return false;
-				}
+				};
 			}
 		},
 
-		decode = function(treeRoute, preferred) {
-			var route = [];
-			for (var r in treeRoute) {
-				var part = treeRoute[r];
+		decode_text = function(_route) {
+			var list	= _route.match(/([^\/,:\[\]]+:?|\{[^\}]+\}|[\/,\[\]])/g),
+				stack	= [],
+				operands = {
+					'[': function() { stack.push(_route); _route = []; },
+					']': function() { var _ = _route; _route = stack.pop(); _route.push(_); },
+					'/': function() {},
+					',': function() {}
+				},
+				l,
+				item,
+				p;
+
+			_route = [];
+
+			for (l = 0; l < list.length; ++l) {
+				item = list[l];
+				if (operands[item]) {
+					operands[item]();
+				} else {
+					p = /^([A-Z]+):$/g.exec(item);
+					_route.push(p? Hashbang[p[1]] : item);
+				}
+			}
+			return _route;
+		},
+
+		decode_tree = function(treeRoute, Matcher) {
+			var route = [],
+				r,
+				part,
+				m;
+			for (r = 0; r < treeRoute.length; ++r) {
+				part = treeRoute[r];
 				if ((typeof part == 'object') && (part instanceof Array)) {
 					if (typeof part[0] == 'function') {
 						route.push(new part[0](part.slice(1)));
 					} else {
-						route.push(new preferred(part));
+						route.push(new Matcher(part));	// known lint warning.
 					}
 				} else {
-					var m = /^\{(\w+)\}$/g.exec(part);
+					m = /^\{(\w+)\}$/g.exec(part);
 					route.push(m !== null	? new terminal_matchers.variable(m[1])
 											: new terminal_matchers.text(part));
 				}
@@ -106,15 +142,17 @@ var Hashbang = (function() {
 		},
 
 		try_mapping = function(hash, mapping) {
-			var values = {};
+			var values = {},
+				c;
 			if (hash.substr(0, prefix.length) == prefix) {
 				if (mapping.match(values, hash.substr(prefix.length).split('/'))) {
-					var c;
-					for (c in befores)
+					for (c = 0; c < befores.length; ++c) {
 						befores[c].apply(values);
+					}
 					mapping.callback(values);
-					for (c in afters)
+					for (c = 0; c < afters.length; ++c) {
 						afters[c].apply(values);
+					}
 					return true;
 				}
 			}
@@ -122,9 +160,12 @@ var Hashbang = (function() {
 		},
 
 		try_mappings = function(hash) {
-			for (var m in mappings)
-				if (try_mapping(hash, mappings[m]))
+			var m;
+			for (m = 0; m < mappings.length; ++m) {
+				if (try_mapping(hash, mappings[m])) {
 					return true;
+				}
+			}
 			return false;
 		},
 
@@ -132,39 +173,18 @@ var Hashbang = (function() {
 			if (previous_hash !== location.hash) {
 				previous_hash = location.hash;
 
-				if (try_mappings(location.hash))
+				if (try_mappings(location.hash)) {
 					return;
+				}
 
-				if (notfound)
+				if (notfound) {
 					notfound(location.hash);
+				}
 			}
 		},
 
 		Mapping = function(_route, _callback) {
-			if (typeof _route == 'string') {
-				var list	= _route.match(/([^\/,:[\]]+:?|\{[^}]+}|[\/,[\]])/g),
-					stack	= [],
-					operands = {
-						'[': function() { stack.push(_route); _route = []; },
-						']': function() { var _ = _route; _route = stack.pop(); _route.push(_); },
-						'/': function() {},
-						',': function() {}
-					};
-
-				_route = [];
-
-				for (var l in list) {
-					var item = list[l];
-					if (operands[item]) {
-						operands[item]();
-					} else {
-						var p = /^([A-Z]+):$/g.exec(item);
-						_route.push(p? Hashbang[p[1]] : item);
-					}
-				}
-			}
-
-			var route		= new Hashbang.SEQUENCE(_route),
+			var route		= new Hashbang.SEQUENCE(typeof _route == 'string' ? decode_text(_route) : _route),
 				callbacks	= [_callback],
 				befores		= [],
 				afters		= [];
@@ -175,12 +195,15 @@ var Hashbang = (function() {
 
 			this.callback = function(values) {
 				var c;
-				for (c in befores)
+				for (c = 0; c < befores.length; ++c) {
 					befores[c].apply(values);
-				for (c in callbacks)
+				}
+				for (c = 0; c < callbacks.length; ++c) {
 					callbacks[c].apply(values);
-				for (c in afters)
+				}
+				for (c = 0; c < afters.length; ++c) {
 					afters[c].apply(values);
+				}
 			};
 
 			this.addCallback = function(_callback) {
@@ -210,39 +233,46 @@ var Hashbang = (function() {
 
 	return {
 		SEQUENCE: function(_subRoute) {
-			var subRoute = decode(_subRoute, Hashbang.ONE);
+			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
 
 			this.match = function(values, hash, position) {
-				for (var p = 0; p < subRoute.length; ++p) {
+				var p;
+				for (p = 0; p < subRoute.length; ++p) {
 					position = subRoute[p].match(values, hash, position);
-					if (position === false)
+					if (position === false) {
 						return false;
+					}
 				}
 				return position;
 			};
 		},
 
 		ONE: function(_subRoute) {
-			var subRoute = decode(_subRoute, Hashbang.SEQUENCE);
+			var subRoute = decode_tree(_subRoute, Hashbang.SEQUENCE);
 
 			this.match = function(values, hash, position) {
-				for (var p = 0; p < subRoute.length; ++p) {
-					var newpos = subRoute[p].match(values, hash, position);
-					if (newpos !== false)
+				var p,
+					newpos;
+				for (p = 0; p < subRoute.length; ++p) {
+					newpos = subRoute[p].match(values, hash, position);
+					if (newpos !== false) {
 						return newpos;
+					}
 				}
 				return false;
 			};
 		},
 
 		ALL: function(_subRoute) {
-			var subRoute = decode(_subRoute, Hashbang.SEQUENCE);
+			var subRoute = decode_tree(_subRoute, Hashbang.SEQUENCE);
 
 			this.match = function(values, hash, position) {
-				var choices = subRoute.slice();
-				for (var n in subRoute) {
-					var found;
-					for (var p in choices) {
+				var choices = subRoute.slice(),
+					n,
+					found,
+					p;
+				for (n = 0; n < subRoute.length; ++n) {
+					for (p = 0; p < choices.length; ++p) {
 						found = choices[p].match(values, hash, position);
 						if (found !== false) {
 							position = found;
@@ -251,11 +281,13 @@ var Hashbang = (function() {
 						}
 					}
 
-					if (found === false)
+					if (found === false) {
 						return false;
+					}
 
-					if (choices.length <= 0)
+					if (choices.length <= 0) {
 						return position;
+					}
 				}
 				return false;
 			};
@@ -305,7 +337,8 @@ var Hashbang = (function() {
 
 		// Remove a single mapping.
 		unmap: function(_Mapping) {
-			for (var m in mappings) {
+			var m;
+			for (m = 0; m < mappings.length; ++m) {
 				if (mappings[m] === _Mapping) {
 					mappings.splice(m,1);
 					autoenable();
@@ -323,7 +356,7 @@ var Hashbang = (function() {
 		enable: function() {
 			if (!enabled) {
 				enabled = true;
-				if ("onhashchange" in window && (!document.documentMode || document.documentMode >= 8)) {
+				if (window.onhashchange && (!document.documentMode || document.documentMode >= 8)) {
 					window.onhashchange = dispatch;
 				} else {
 					interval = setInterval(dispatch, 50);
@@ -359,4 +392,4 @@ var Hashbang = (function() {
 			return unsetArray(afters, _after);
 		}
 	};
-})();
+}());
