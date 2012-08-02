@@ -185,6 +185,9 @@ var Hashbang = (function() {
 			}
 		},
 
+		/**
+		 * @constructor
+		 */
 		Mapping = function(_route, _callback) {
 			var route		= new Hashbang.SEQUENCE(typeof _route == 'string' ? decode_text(_route) : _route),
 				callbacks	= [_callback],
@@ -351,7 +354,7 @@ var Hashbang = (function() {
 		enable: function() {
 			if (!enabled) {
 				enabled = true;
-				if (window.onhashchange && (!document.documentMode || document.documentMode >= 8)) {
+				if (typeof window.onhashchange !== 'undefined' && (!document.documentMode || document.documentMode >= 8)) {
 					window.onhashchange = dispatch;
 				} else {
 					interval = setInterval(dispatch, 50);
@@ -365,7 +368,7 @@ var Hashbang = (function() {
 				if (interval) {
 					clearInterval(interval);
 				} else {
-					window.onhashchange = undefined;
+					window.onhashchange = null;
 				}
 				previous_hash = undefined;
 			}
