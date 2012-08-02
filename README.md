@@ -109,6 +109,7 @@ Hashbang
 * Hashbang.MANY: {},		// match atleast one, in any order
 * Hashbang.ANY: {},		// match zero or more, in any order.
 * Hashbang.OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
+
 ### Terminology
 * Hashbang. The object of our subject.
 * mapping. A combination of a route and the callback(s) it triggers.
