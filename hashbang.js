@@ -141,18 +141,20 @@ var Hashbang = (function() {
 			return route;
 		},
 
+		apply_callbacks = function(callbacks, values) {
+			var c;
+			for (c = 0; c < callbacks.length; ++c) {
+				callbacks[c].apply(values);
+			}
+		},
+
 		try_mapping = function(hash, mapping) {
-			var values = {},
-				c;
+			var values = {};
 			if (hash.substr(0, prefix.length) == prefix) {
 				if (mapping.match(values, hash.substr(prefix.length).split('/'))) {
-					for (c = 0; c < befores.length; ++c) {
-						befores[c].apply(values);
-					}
+					apply_callbacks(befores, values);
 					mapping.callback(values);
-					for (c = 0; c < afters.length; ++c) {
-						afters[c].apply(values);
-					}
+					apply_callbacks(afters, values);
 					return true;
 				}
 			}
@@ -194,16 +196,9 @@ var Hashbang = (function() {
 			};
 
 			this.callback = function(values) {
-				var c;
-				for (c = 0; c < befores.length; ++c) {
-					befores[c].apply(values);
-				}
-				for (c = 0; c < callbacks.length; ++c) {
-					callbacks[c].apply(values);
-				}
-				for (c = 0; c < afters.length; ++c) {
-					afters[c].apply(values);
-				}
+				apply_callbacks(befores, values);
+				apply_callbacks(callbacks, values);
+				apply_callbacks(afters, values);
 			};
 
 			this.addCallback = function(_callback) {
