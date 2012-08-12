@@ -81,3 +81,6 @@ function unloadjs(url) {
 		}
 	}
 }
+
+// Some variables to be used by the test scripts.
+var route;

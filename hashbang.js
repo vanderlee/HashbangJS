@@ -112,7 +112,7 @@ var Hashbang = (function() {
 			return _route;
 		},
 
-		decode_tree = function(treeRoute, Matcher) {
+		decode_tree = function(treeRoute, matcherGenerator) {
 			var route = [],
 				r,
 				part,
@@ -121,9 +121,9 @@ var Hashbang = (function() {
 				part = treeRoute[r];
 				if ((typeof part == 'object') && (part instanceof Array)) {
 					if (typeof part[0] == 'function') {
-						route.push(new part[0](part.slice(1)));
+						route.push(part[0](part.slice(1)));
 					} else {
-						route.push(new Matcher(part));	// known lint warning.
+						route.push(matcherGenerator(part));	// known lint warning.
 					}
 				} else {
 					m = /^\{(\w+)\}$/g.exec(part);
@@ -153,7 +153,7 @@ var Hashbang = (function() {
 				hash = hash.substr(hash.match(/^\W+/)[0].length);
 			}
 
-			if (mapping.match(values, hash.split('/'))) {
+			if (mapping.match(values, hash ? hash.split('/') : []) !== false) {
 				apply_callbacks(befores, values);
 				mapping.callback(values);
 				apply_callbacks(afters, values);
@@ -191,13 +191,18 @@ var Hashbang = (function() {
 		 * @constructor
 		 */
 		Mapping = function(_route, _callback) {
-			var route		= new Hashbang.SEQUENCE(typeof _route == 'string' ? decode_text(_route) : _route),
+			var route		= typeof _route == 'string'
+								? decode_text(_route)
+								: _route,
+				matcher		= typeof route[0] == 'function'
+								? route[0](route.slice(1))
+								: Hashbang.SEQUENCE(route),
 				callbacks	= [_callback],
 				befores		= [],
 				afters		= [];
 
 			this.match = function(values, hash) {
-				return route.match(values, hash, 0) == hash.length;
+				return matcher.match(values, hash, 0) === hash.length;
 			};
 
 			this.callback = function(values) {
@@ -229,68 +234,98 @@ var Hashbang = (function() {
 			this.removeAfter = function(_after) {
 				return unsetArray(afters, _after);
 			};
-		};
-
-	return {
-		SEQUENCE: function(_subRoute) {
-			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
-
-			this.match = function(values, hash, position) {
-				var p;
-				for (p = 0; p < subRoute.length; ++p) {
-					position = subRoute[p].match(values, hash, position);
-					if (position === false) {
-						return false;
-					}
-				}
-				return position;
-			};
 		},
 
-		ONE: function(_subRoute) {
-			var subRoute = decode_tree(_subRoute, Hashbang.SEQUENCE);
+		MatcherOrdered = function(_routeParts, _min, _optional) {
+			var routeParts	= _routeParts,
+				min			= _min || 0,
+				optional	= _optional || false;
 
 			this.match = function(values, hash, position) {
 				var p,
-					newpos;
-				for (p = 0; p < subRoute.length; ++p) {
-					newpos = subRoute[p].match(values, hash, position);
-					if (newpos !== false) {
-						return newpos;
+					pos,
+					count = 0;
+				for (p = 0; p < routeParts.length; ++p) {
+					pos = routeParts[p].match(values, hash, position);
+					if (pos === false) {
+						if (!optional) {
+							return false;
+						}
+					} else {
+						++count;
+						position = pos;
 					}
 				}
-				return false;
+				return count < min ? false : position;
 			};
 		},
 
-		ALL: function(_subRoute) {
-			var subRoute = decode_tree(_subRoute, Hashbang.SEQUENCE);
+		MatcherUnordered = function(_routeParts, _min, _max) {
+			var routeParts	= _routeParts,
+				min			= _min || 0,
+				max			= _max || 9007199254740992;
 
 			this.match = function(values, hash, position) {
-				var choices = subRoute.slice(),
+				var choices = routeParts.slice(),
 					n,
 					found,
-					p;
-				for (n = 0; n < subRoute.length; ++n) {
-					for (p = 0; p < choices.length; ++p) {
+					p,
+					count = 0;
+				for (n = 0; n < routeParts.length && count < max; ++n) {
+					for (p = 0; p < choices.length && count < max; ++p) {
 						found = choices[p].match(values, hash, position);
 						if (found !== false) {
+							++count;
 							position = found;
 							choices.splice(p, 1);
 							break;
 						}
 					}
 
-					if (found === false) {
-						return false;
-					}
-
-					if (choices.length <= 0) {
+					if (choices.length <= 0) {	// all found, match!
 						return position;
 					}
 				}
-				return false;
+				return count >= min ? position : false;
 			};
+		};
+
+	return {
+		SEQUENCE: function(_subRoute) {
+			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
+			return new MatcherOrdered(subRoute, subRoute.length);
+		},
+
+//@todo SEQUENCE, OPTIONAL and CHOOSE are nasty names. Some other way?
+		OPTIONAL: function(_subRoute) {
+			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
+			return new MatcherOrdered(subRoute, 0, true);
+		},
+
+		CHOOSE: function(_subRoute) {
+			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
+			return new MatcherOrdered(subRoute, 1, true);
+		},
+
+		ZERO: function(_subRoute) {
+			return new MatcherUnordered(decode_tree(_subRoute, Hashbang.SEQUENCE), 0, 1);
+		},
+
+		ONE: function(_subRoute) {
+			return new MatcherUnordered(decode_tree(_subRoute, Hashbang.SEQUENCE), 1, 1);
+		},
+
+		ANY: function(_subRoute) {
+			return new MatcherUnordered(decode_tree(_subRoute, Hashbang.SEQUENCE));
+		},
+
+		MANY: function(_subRoute) {
+			return new MatcherUnordered(decode_tree(_subRoute, Hashbang.SEQUENCE), 1);
+		},
+
+		ALL: function(_subRoute) {
+			var subRoute = decode_tree(_subRoute, Hashbang.SEQUENCE);
+			return new MatcherUnordered(subRoute, subRoute.length);
 		},
 
 		prefix: function(_prefix) {

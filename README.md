@@ -28,8 +28,8 @@ coverage.
 * No known conflics with any of the major JavaScript libraries.
 	* Tested with AngularJS, Backbone, Underscore, CoffeeScript, Cufon, D3,
 	Dojo, Ember, Ext Core, HTML5Shiv, jQuery, jQueryUI, Knockout, Modernizr,
-	MooTools, Processing, Prototype, Protovis, Raphael, RightJS, SoundManager,
-	Three, Underscore, YUI, WebFont and Zepto. (And obviously QUnit).
+	MooTools, Processing, Prototype, Protovis, Raphael, RightJS, Three,
+	Underscore, YUI, WebFont and Zepto. (And obviously QUnit).
 * Passes JSLint 100% clean.
 * Passes Google Closure Compiler advanced mode
 
@@ -89,8 +89,11 @@ Odd levels use ONE.
 ### Hashbang.SEQUENCE / SEQUENCE:
 Default on first and odd levels; match the path parts in given order.
 
+### Hashbang.ZERO / ZERO:
+Match either none or one of the given path parts.
+
 ### Hashbang.ONE / ONE:
-Default on even levels; math one of the given path parts.
+Default on even levels; match one and only one of the given path parts.
 
 ### Hashbang.ALL / ALL:
 Can be specified at start of level using 'ALL:' in strings or Hashbang.ALL
@@ -109,6 +112,33 @@ Hashbang
 * Hashbang.MANY: {},		// match atleast one, in any order
 * Hashbang.ANY: {},		// match zero or more, in any order.
 * Hashbang.OPTIONAL: {},	// match zero or one	-> ONE that may be false, or ONE = OPTIONAL that must match?
+* For testing; ability to force "backwards compatible" method of checking hash; option?
+* Partial matching / Skipped matching:
+	* 'theme' matches '#path/theme=2/order=3' (returns theme=2)
+	* 'path/order' matches '#path/theme=2/order=3' (returns path, order=3)
+
+Base:
+	MatchOrdered(min = 0, optional = false)
+	MatchUnordered(min = 0, max = null)
+
+???: either all or none of the items, in order	OPTIONAL(SEQUENCE/ALL)
+SEQUENCE: each item required, in order		aka ORDER/ONCE
+
+ANY: each item optional, random, zero or more
+MANY: each item optional, random, atleast one
+ALL: each item required, random
+
+ONE: one of the items
+ZERO: zero or one of the items
+
+OPTIONAL: each item optional, in order, zero or more	=> ANY(SEQUENCE(ZERO(item),ZERO(item),ZERO(...),...))
+CHOOSE: each item optional, in order, atleast one		! REDEFINITION OF CHOICE?
+
+Custom....
+REPEAT: repeat sequence one or more times
+ORDERED(n,m)
+UNORDERED(n,m)
+
 
 ### Terminology
 * Hashbang. The object of our subject.

@@ -29,11 +29,9 @@ testLibrary('Knockout 2.1.0 (Microsoft)', ['http://ajax.aspnetcdn.com/ajax/knock
 testLibrary('Modernizr 2.0.6 (Microsoft)', ['http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.0.6-development-only.js']);
 testLibrary('MooTools 1.4.5 (Google)', ['http://ajax.googleapis.com/ajax/libs/mootools/1.4.5/mootools-yui-compressed.js']);
 testLibrary('Processing 1.3.6 (CDNJS)', ['http://cdnjs.cloudflare.com/ajax/libs/processing.js/1.3.6/processing-api.min.js']);
-testLibrary('Prototype 1.7.1.0 (Google)', ['http://ajax.googleapis.com/ajax/libs/prototype/1.7.1.0/prototype.js']);
+//testLibrary('Prototype 1.7.1.0 (Google)', ['http://ajax.googleapis.com/ajax/libs/prototype/1.7.1.0/prototype.js']);	//@todo sometimes throws weird error.
 testLibrary('Protovis 3.2.0 (Cached Commons)', ['http://cachedcommons.org/cache/protovis/3.2.0/javascripts/protovis-min.js']);
 testLibrary('Raphael 1.4.7 (Cached Commons)', ['http://cachedcommons.org/cache/raphael/1.4.7/javascripts/raphael-min.js']);
-testLibrary('RightJS 2.3.1 (RightJS)', ['http://cdn.rightjs.org/right-2.3.1.js']);
-testLibrary('SoundManager 2.0.0 (Cached Commons)', ['http://cachedcommons.org/cache/sound-manager-2/2.0.0/javascripts/sound-manager-2-min.js']);
 testLibrary('Three 0.0.0 (Cached Commons)', ['http://cachedcommons.org/cache/three/0.0.0/javascripts/three-min.js']);
 testLibrary('YUI 3.3.0 (CDNJS)', ['http://cdnjs.cloudflare.com/ajax/libs/yui/3.3.0/yui-min.js']);
 testLibrary('WebFont 1.0.28 (Google)', ['http://ajax.googleapis.com/ajax/libs/webfont/1.0.28/webfont.js']);
