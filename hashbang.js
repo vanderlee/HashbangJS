@@ -334,10 +334,13 @@ var Hashbang = (function() {
 
 		root: function(_root_hash) {
 			root_hash = _root_hash;
-			if (enabled && location.hash === '' && !root_handled && typeof root_hash == 'string') {
-				if (try_mappings(root_hash)) {
-					root_handled = true;
-					previous_hash = location.hash = root_hash;
+			if (location.hash === '') {
+				location.hash = root_hash;
+				if (!root_handled && enabled) {
+					if (try_mappings(location.hash)) {
+						root_handled = true;
+						previous_hash = location.hash;
+					}
 				}
 			}
 		},
@@ -346,14 +349,13 @@ var Hashbang = (function() {
 			notfound = _callback;
 			autoenable();
 		},
-
 		map: function(_route, _callback) {
 			var mapping = new Mapping(_route, _callback);
 
-			if (location.hash == '' && !root_handled && typeof root_hash == 'string') {
-				if (try_mapping(root_hash, mapping)) {
+			if (!root_handled && location.hash !== '') {
+				if (try_mapping(location.hash, mapping)) {
 					root_handled = true;
-					previous_hash = location.hash = root_hash;
+					previous_hash = location.hash;
 				}
 			}
 

@@ -117,29 +117,6 @@ Hashbang
 	* 'theme' matches '#path/theme=2/order=3' (returns theme=2)
 	* 'path/order' matches '#path/theme=2/order=3' (returns path, order=3)
 
-Base:
-	MatchOrdered(min = 0, optional = false)
-	MatchUnordered(min = 0, max = null)
-
-???: either all or none of the items, in order	OPTIONAL(SEQUENCE/ALL)
-SEQUENCE: each item required, in order		aka ORDER/ONCE
-
-ANY: each item optional, random, zero or more
-MANY: each item optional, random, atleast one
-ALL: each item required, random
-
-ONE: one of the items
-ZERO: zero or one of the items
-
-OPTIONAL: each item optional, in order, zero or more	=> ANY(SEQUENCE(ZERO(item),ZERO(item),ZERO(...),...))
-CHOOSE: each item optional, in order, atleast one		! REDEFINITION OF CHOICE?
-
-Custom....
-REPEAT: repeat sequence one or more times
-ORDERED(n,m)
-UNORDERED(n,m)
-
-
 ### Terminology
 * Hashbang. The object of our subject.
 * mapping. A combination of a route and the callback(s) it triggers.
