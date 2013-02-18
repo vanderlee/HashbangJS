@@ -43,14 +43,62 @@
 
 			Hashbang.root('#!path/123');
 		</script>
+
+		<style>
+			body {
+				font-family:	'Segoe UI', Verdana, Helvetica, Arial, sans-serif;
+				font-size:		12px;
+				margin:			2em;
+			}
+		</style>
     </head>
     <body>
-		<a href="#!path">Path</a>
-		<a href="#!path/234">Path short</a>
-		<a href="#!path/123/sort=1">Path sort</a>
-		<a href="#!path/353/order=33">Path order</a>
-		<a href="#!path/555/order=55/sort=5">Path all</a>
-		<a href="#!path/555/nothing/order=55/sort=5">Path nothing</a>
-		<a href="#!going/nowhere/fast">Path 404</a>
+		<h1>HashbangJS</h1>
+		<p>
+			A simple and flexible hashbang routing framework<br/>
+		</p>
+		<p>
+			I made this because other frameworks were either too limited in syntax (most of them) or performed badly (the rest of them).<br/>
+			HashbangJS takes a different approach by "precompiling" routes in a format that is both flexible and performs well.
+			You pay a one time price in performance at the start to gain useful abilities and higher performance while running.<br/>
+			Contact <a href="https://github.com/vanderlee">me</a> on github: <a href="https://github.com/vanderlee/HashbangJS">https://github.com/vanderlee/HashbangJS</a>
+		</p>
+
+		<h2>Features</h2>
+		<ul>
+			<li>Supports easy text syntax or generatable tree syntax.</li>
+			<li>Lets you specify repeating, optional and required elements in a route.</li>
+			<li>Supports both divider (#!sort/id/page/123) and assignment (#!sort=id/page=123) or any combination</li>
+			<li>Lets you specify randomly ordered elements; if you want #!mail/inbox/private and #!mail/private/inbox can match the same path.</li>
+			<li>Lets you specify many other types of elements, and is extendable if you need more.</li>
+			<li>Doesn't rely on jQuery, Dojo or any other framework.</li>
+			<li>...but works with all those frameworks and more (jQuery, Dojo, KnockoutJS, Backbone, ExtJS, AngularJS, Ember, etc&hellip;).</li>
+			<li>Starts automatically, regardless in which order you program the API.</li>
+			<li>Handles configurable hashbang prefixes, #, #!, ##, etc&hellip; HashBangJS can even handle multiple prefixes at once.</li>
+			<li>Unmap and reset paths if you need to change routing.</li>
+			<li>Add multiple callbacks to a single route.</li>
+			<li>Add callbacks to execute before and after matching a specific route.</li>
+			<li>Add callbacks before and after any match; useful for logging and debugging.</li>
+			<li>Documented: <a href="https://github.com/vanderlee/HashbangJS/blob/master/README.md">https://github.com/vanderlee/HashbangJS/blob/master/README.md</a></li>
+			<li>Unittested: <a href="test.html">test.html</a></li>
+			<li>And I'm using it in a production environment myself!</li>
+		</ul>
+
+		<h2>QUnit test</h2>
+		126 unit testcases at last counting.<br/>
+		Whenever a bug is found, testcases are added to ensure it doesn't ever return.<br/>
+		<a href="test.html">Click here to run test</a>
+
+		<h2>Simple examples</h2>
+		Open a console window to read the source and watch the results.
+		<ol>
+			<li><a href="#!path">Path</a></li>
+			<li><a href="#!path/234">Path short</a></li>
+			<li><a href="#!path/123/sort=1">Path sort</a></li>
+			<li><a href="#!path/353/order=33">Path order</a></li>
+			<li><a href="#!path/555/order=55/sort=5">Path all</a></li>
+			<li><a href="#!path/555/nothing/order=55/sort=5">Path nothing</a></li>
+			<li><a href="#!going/nowhere/fast">Path 404</a></li>
+		</ol>
     </body>
 </html>
