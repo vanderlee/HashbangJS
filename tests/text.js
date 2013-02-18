@@ -8,3 +8,5 @@ test_mapping('Additional char in url', 'path', '!paths', false);
 
 test_mapping('Two parts match', 'path/more', '!path/more', true);
 test_mapping('Two parts mismatch', 'path/more', '!path/other', false);
+
+test_mapping('Variable', 'path/<more>', '!path/123', true);

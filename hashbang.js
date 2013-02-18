@@ -86,7 +86,7 @@ var Hashbang = (function() {
 		},
 
 		decode_text = function(_route) {
-			var list	= _route.match(/([^\/,:\[\]]+:?|\{[^\}]+\}|[\/,\[\]])/g),
+			var list	= _route.match(/([^\/,:\[\]]+:?|\<[^\>]+\>|[\/,\[\]])/g),
 				stack	= [],
 				operands = {
 					'[': function() { stack.push(_route); _route = []; },
@@ -126,7 +126,7 @@ var Hashbang = (function() {
 						route.push(matcherGenerator(part));	// known lint warning.
 					}
 				} else {
-					m = /^\{(\w+)\}$/g.exec(part);
+					m = /^\<(\w+)\>$/g.exec(part);
 					route.push(m !== null	? new terminal_matchers.variable(m[1])
 											: new terminal_matchers.text(part));
 				}

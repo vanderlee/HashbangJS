@@ -107,7 +107,8 @@ see index.html file
 * Complete documentation
 * Turn index.html in a mini-portal with documentation. Make sure it uses
 Hashbang
-* R&D a way to report {id=val} pairs.
+* R&D a way to report id=val pairs.
+* R&D a way to parse <id=,> as CSV list
 * Allow to set prefix per mapping?
 * Hashbang.MANY: {},		// match atleast one, in any order
 * Hashbang.ANY: {},		// match zero or more, in any order.
