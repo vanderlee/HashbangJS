@@ -1,4 +1,6 @@
 # HashbangJS
+Version 0.1
+
 Easy Hash URL router with complex path specs.
 
 HTML5 pushState not supported; many browsers in common use don't support it.
