@@ -14,21 +14,21 @@
 			});
 			Hashbang.unmap(m);
 
-			Hashbang.map('path/{id}', function() {
-				console.log('Short match: path/{id}', this);
+			Hashbang.map('path/<id>', function() {
+				console.log('Short match: path/<id>', this);
 			});
 
-			Hashbang.map(['path', '{id}', ['sort', 'order']], function() {
-				console.log('Match: path/{id}/[sort,order]', this);
+			Hashbang.map(['path', '<id>', ['sort', 'order']], function() {
+				console.log('Match: path/<id>/[sort,order]', this);
 			});
 
-			Hashbang.map(['path', '{id}', ['sort', 'order']], function() {
-				console.log('Match: path/{id}/[sort,order]', this);
+			Hashbang.map(['path', '<id>', ['sort', 'order']], function() {
+				console.log('Match: path/<id>/[sort,order]', this);
 			});
 
 			// short syntax (parses to ['path', '{id}', [Router.ALL, 'sort', 'order']]
-			var m = Hashbang.map('path/{id}/[ALL:sort,order]', function() {
-				console.log('Short match: path/{id}[sort,order]', this);
+			var m = Hashbang.map('path/<id>/[ALL:sort,order]', function() {
+				console.log('Short match: path/<id>[sort,order]', this);
 			});
 
 			Hashbang.addAfter(function() { console.log('global after'); });
