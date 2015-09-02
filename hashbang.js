@@ -10,7 +10,7 @@
  * No dependancies, no known conflicts.
  */
 
-var Hashbang = (function() {
+var Hashbang = (function(undefined) {
 	"use strict";
 
 	// private
@@ -296,7 +296,6 @@ var Hashbang = (function() {
 			return new MatcherOrdered(subRoute, subRoute.length);
 		},
 
-//@todo SEQUENCE, OPTIONAL and CHOOSE are nasty names. Some other way?
 		OPTIONAL: function(_subRoute) {
 			var subRoute = decode_tree(_subRoute, Hashbang.ONE);
 			return new MatcherOrdered(subRoute, 0, true);

@@ -129,3 +129,6 @@ Hashbang
 * matcher. An object that tries to match (part of) a hash to (part of) a route.
 * prefix. A short string of what the hash itself looks like.
 * subRoute. Part of a route handled by a matcher.
+
+### Future
+* SEQUENCE, OPTIONAL and CHOOSE are nasty names. Pick other names
