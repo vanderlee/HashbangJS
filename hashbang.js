@@ -150,7 +150,7 @@ var Hashbang = (function(undefined) {
 				}
 				hash = hash.substr(prefix.length);
 			} else {
-				hash = hash.substr(hash.match(/^\W+/)[0].length);
+				hash = hash.substr(hash.match(/^\W*/)[0].length);
 			}
 
 			if (mapping.match(values, hash ? hash.split('/') : []) !== false) {
