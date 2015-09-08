@@ -1,5 +1,5 @@
 # HashbangJS
-Version 0.1
+Version 0.2
 
 Easy Hash URL router with complex path specs.
 
